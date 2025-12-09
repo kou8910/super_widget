@@ -17,10 +17,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SuperExpandableText 示例'),
-        elevation: 2,
-      ),
+      appBar: AppBar(title: const Text('SuperExpandableText 示例'), elevation: 2),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -42,7 +39,8 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
               title: '2. 自定义按钮文本',
               description: '自定义展开/收起按钮的文字',
               child: const SuperExpandableText(
-                text: '你可以自定义展开和收起按钮的文字。这个示例使用了"查看更多"和"收起内容"作为按钮文本，而不是默认的"展开"和"收起"。通过设置 expandText 和 collapseText 参数，你可以根据实际场景使用更合适的文案，比如"阅读全文"、"查看详情"等。',
+                text:
+                    '你可以自定义展开和收起按钮的文字。这个示例使用了"查看更多"和"收起内容"作为按钮文本，而不是默认的"展开"和"收起"。通过设置 expandText 和 collapseText 参数，你可以根据实际场景使用更合适的文案，比如"阅读全文"、"查看详情"等。',
                 maxLines: 2,
                 expandText: '查看更多',
                 collapseText: '收起内容',
@@ -55,11 +53,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
               child: SuperExpandableText(
                 text: '这是带有自定义样式的文本示例。文本使用了较大的字号（16px）和深灰色，提高了阅读体验。链接按钮使用了蓝色、粗体和下划线样式，让展开/收起按钮更加醒目。你可以根据应用的设计规范，自由定制各种文本样式，包括字体、颜色、行高、装饰等。',
                 maxLines: 2,
-                textStyle: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                  height: 1.5,
-                ),
+                textStyle: const TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
                 collapseStyle: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -89,10 +83,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                   ),
                   TextSpan(
                     text: '粗体',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
                   TextSpan(
                     text: '、',
@@ -100,10 +91,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                   ),
                   TextSpan(
                     text: '斜体',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      color: Colors.black87,
-                    ),
+                    style: TextStyle(fontStyle: FontStyle.italic, color: Colors.black87),
                   ),
                   TextSpan(
                     text: '、',
@@ -142,10 +130,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                   ),
                   TextSpan(
                     text: '粗体文字',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
                   TextSpan(
                     text: '、',
@@ -153,10 +138,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                   ),
                   TextSpan(
                     text: '下划线文字',
-                    style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.black87,
-                    ),
+                    style: TextStyle(decoration: TextDecoration.underline, color: Colors.black87),
                   ),
                   TextSpan(
                     text: '、',
@@ -187,12 +169,9 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                     '这个示例展示了状态回调功能。每次点击展开或收起按钮时，会显示一个 SnackBar 提示消息。你可以在 onExpanded 回调中执行各种操作，比如统计用户行为、记录日志、触发其他业务逻辑等。回调函数会接收一个布尔参数，表示即将要变成的状态（true表示将要展开，false表示将要收起）。',
                 maxLines: 2,
                 onExpanded: (willExpanded) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('文本${willExpanded ? '展开' : '收起'}'),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('文本${willExpanded ? '展开' : '收起'}'), duration: const Duration(seconds: 1)));
                   return true;
                 },
               ),
@@ -207,12 +186,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                 maxLines: 2,
                 onExpanded: (willExpanded) {
                   if (willExpanded) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('展开操作被阻止'),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('展开操作被阻止'), duration: Duration(seconds: 1)));
                     return false;
                   }
                   return true;
@@ -259,12 +233,11 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SuperExpandableText(
-                    text: '这是一段可选中的文本示例。你可以长按或拖动来选中文本内容。当选中文本时，会在下方显示选中的文本内容和选中范围。通过 onSelectionChanged 参数，组件会自动使用 SelectableText 替代 RichText，支持文本选中功能。这个功能适用于需要用户能够复制或分享文本内容的场景。',
+                    text:
+                        '这是一段可选中的文本示例。你可以长按或拖动来选中文本内容。当选中文本时，会在下方显示选中的文本内容和选中范围。通过 onSelectionChanged 参数，组件会自动使用 SelectableText 替代 RichText，支持文本选中功能。这个功能适用于需要用户能够复制或分享文本内容的场景。',
                     maxLines: 3,
-                    builder: (textSpan,endOffset) {
-                      return SelectableText.rich(
-                        textSpan,
-                      );
+                    builder: (richTex, textSpan, endOffset) {
+                      return SelectableText.rich(textSpan);
                     },
                   ),
                   if (_textSelection != null && _textSelection!.start != _textSelection!.end)
@@ -281,19 +254,10 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                         children: [
                           Text(
                             '选中范围: ${_textSelection!.start} - ${_textSelection!.end}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.blue.shade700,
-                            ),
+                            style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            '选中内容: $_selectedText',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          Text('选中内容: $_selectedText', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                         ],
                       ),
                     ),
@@ -309,19 +273,13 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
             _buildExample(
               title: '10. 换行符文本',
               description: '包含换行符的文本',
-              child: const SuperExpandableText(
-                text: '第一行：这是第一行的内容\n第二行：这是第二行的内容\n第三行：这是第三行的内容\n第四行：这是第四行的内容\n第五行：这是第五行的内容',
-                maxLines: 2,
-              ),
+              child: const SuperExpandableText(text: '第一行：这是第一行的内容\n第二行：这是第二行的内容\n第三行：这是第三行的内容\n第四行：这是第四行的内容\n第五行：这是第五行的内容', maxLines: 2),
             ),
 
             _buildExample(
               title: '11. 数字换行',
               description: '1\\n2\\n3\\n... 形式的文本',
-              child: const SuperExpandableText(
-                text: '1\n2\n3\n4\n5\n6\n7\n8\n9\n10',
-                maxLines: 3,
-              ),
+              child: const SuperExpandableText(text: '1\n2\n3\n4\n5\n6\n7\n8\n9\n10', maxLines: 3),
             ),
 
             _buildExample(
@@ -340,12 +298,18 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
                     text: '第二行：',
                     style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
-                  TextSpan(text: '蓝色内容\n', style: TextStyle(color: Colors.blue)),
+                  TextSpan(
+                    text: '蓝色内容\n',
+                    style: TextStyle(color: Colors.blue),
+                  ),
                   TextSpan(
                     text: '第三行：',
                     style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
                   ),
-                  TextSpan(text: '红色内容', style: TextStyle(color: Colors.red)),
+                  TextSpan(
+                    text: '红色内容',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ],
               ),
             ),
@@ -358,44 +322,28 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
             _buildExample(
               title: '13. 短文本',
               description: '不需要展开的短文本',
-              child: const SuperExpandableText(
-                text: '这是短文本。',
-                maxLines: 3,
-              ),
+              child: const SuperExpandableText(text: '这是短文本。', maxLines: 3),
             ),
 
             _buildExample(
               title: '14. 空文本',
               description: '文本为空字符串',
-              child: const SuperExpandableText(
-                text: '',
-                maxLines: 2,
-              ),
+              child: const SuperExpandableText(text: '', maxLines: 2),
             ),
 
             _buildExample(
               title: '15. 样式继承',
               description: '继承父级 DefaultTextStyle',
               child: const DefaultTextStyle(
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.purple,
-                  fontWeight: FontWeight.w500,
-                ),
-                child: SuperExpandableText(
-                  text: '这段文本继承了父级的样式设置。',
-                  maxLines: 2,
-                ),
+                style: TextStyle(fontSize: 18, color: Colors.purple, fontWeight: FontWeight.w500),
+                child: SuperExpandableText(text: '这段文本继承了父级的样式设置。', maxLines: 2),
               ),
             ),
 
             _buildExample(
               title: '16. 不同 maxLines',
               description: 'maxLines = 1',
-              child: const SuperExpandableText(
-                text: '这是一段测试文本，maxLines 设置为 1，所以只会显示一行。',
-                maxLines: 1,
-              ),
+              child: const SuperExpandableText(text: '这是一段测试文本，maxLines 设置为 1，所以只会显示一行。', maxLines: 1),
             ),
 
             _buildExample(
@@ -421,9 +369,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blue.shade50, Colors.blue.shade100],
-        ),
+        gradient: LinearGradient(colors: [Colors.blue.shade50, Colors.blue.shade100]),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -432,11 +378,7 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
           const SizedBox(width: 8),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue.shade900,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue.shade900),
           ),
         ],
       ),
@@ -444,24 +386,14 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
   }
 
   /// 构建示例块
-  Widget _buildExample({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
+  Widget _buildExample({required String title, required String description, required Widget child}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -471,38 +403,22 @@ class _SuperExpandableTextExampleState extends State<SuperExpandableTextExample>
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.grey.shade50,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
+                Text(description, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
               ],
             ),
           ),
           // 内容区
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: child,
-          ),
+          Padding(padding: const EdgeInsets.all(16), child: child),
         ],
       ),
     );
