@@ -54,7 +54,7 @@ class SuperExpandableText extends StatefulWidget {
 
   /// 构造方法
   /// [endOffset] 截断时返回
-  final Widget Function(RichText richText, TextSpan textSpan, int? endOffset)? builder;
+  final Widget Function(Widget child, TextSpan textSpan, int? endOffset)? builder;
 
   /// 容错宽度
   /// 当使用 [builder] 时,从可用宽度中减去此值以补偿渲染差异。
@@ -213,8 +213,8 @@ class _SuperExpandableTextState extends State<SuperExpandableText> {
           }
         }
 
-        var richText = RichText(
-          text: textSpan,
+        var richText = Text.rich(
+          textSpan,
           softWrap: true,
           textDirection: textDirection,
           textScaleFactor: textScaleFactor,
