@@ -93,18 +93,18 @@ class SuperExpandableText extends StatefulWidget {
 
 class _SuperExpandableTextState extends State<SuperExpandableText> {
   late bool _expanded;
-  late TapGestureRecognizer _linkTapGestureRecognizer;
+  // late TapGestureRecognizer _linkTapGestureRecognizer;
 
   @override
   void initState() {
     super.initState();
     _expanded = widget.expanded;
-    _linkTapGestureRecognizer = TapGestureRecognizer()..onTap = _toggleExpanded;
+    // _linkTapGestureRecognizer = TapGestureRecognizer(); // 不处理 onTap，交给父级
   }
 
   @override
   void dispose() {
-    _linkTapGestureRecognizer.dispose();
+    // _linkTapGestureRecognizer.dispose();
     super.dispose();
   }
 
@@ -141,6 +141,13 @@ class _SuperExpandableTextState extends State<SuperExpandableText> {
             instance.onDoubleTap = _toggleExpanded; // 双击触发展开/收起
           },
         ),
+        LongPressGestureRecognizer:
+        GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
+              () => LongPressGestureRecognizer(),
+              (instance) {
+            instance.onLongPress = _toggleExpanded; // 长按也触发展开/收起
+          },
+        ),
       },
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -156,7 +163,7 @@ class _SuperExpandableTextState extends State<SuperExpandableText> {
           final link = TextSpan(
             text: _expanded ? ' $linkText' : '... $linkText',
             style: linkTextStyle,
-            recognizer: _linkTapGestureRecognizer,
+            recognizer: null, // 不再拦截单击；双击/长按通过 RawGestureDetector 触发
           );
 
           // 如果使用 builder,需要减去容错宽度以匹配实际渲染
