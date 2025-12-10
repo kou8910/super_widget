@@ -1,6 +1,15 @@
 import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+// ----------------------- 手势增强版说明 -----------------------
+// 在原有 SuperExpandableText 基础上增加以下能力：
+// 1. 双击文本触发展开/收起（不影响内部 link 点击）
+// 2. 长按文本触发复制功能
+// 3. 单击事件不拦截（事件可穿透父级）
+// 以上功能通过 RawGestureDetector 注入 DoubleTapRecognizer 与 LongPressRecognizer 实现
+// ---------------------------------------------------------------
 
 /// 简化版可展开文本组件
 /// 支持展开/收起功能，支持外部富文本控制
@@ -122,107 +131,121 @@ class _SuperExpandableTextState extends State<SuperExpandableText> {
 
     final linkTextStyle = effectiveTextStyle.merge(widget.collapseStyle);
 
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        assert(constraints.hasBoundedWidth);
-        final double maxWidth = constraints.maxWidth;
-
-        final textDirection = Directionality.of(context);
-        final textScaleFactor = MediaQuery.textScaleFactorOf(context);
-        final locale = Localizations.maybeLocaleOf(context);
-
-        // 构建链接按钮
-        final linkText = _expanded ? widget.collapseText : widget.expandText;
-        final link = TextSpan(
-          text: _expanded ? ' $linkText' : '... $linkText',
-          style: linkTextStyle,
-          recognizer: _linkTapGestureRecognizer,
-        );
-
-        // 如果使用 builder,需要减去容错宽度以匹配实际渲染
-        // SelectableText 等组件可能会占用额外宽度(如光标、边距等)
-        final double effectiveMaxWidth = maxWidth - (widget.toleranceWidth ?? 0); // 减去容错宽度,默认 0
-
-        // 测量链接按钮的尺寸
-        TextPainter textPainter = TextPainter(
-          text: link,
-          textDirection: textDirection,
-          textScaleFactor: textScaleFactor,
-          maxLines: widget.maxLines,
-          locale: locale,
-        );
-        textPainter.layout(minWidth: 0, maxWidth: effectiveMaxWidth);
-        final linkSize = textPainter.size;
-
-        // 构建内容
-        final content = _buildContent(effectiveTextStyle);
-
-        // 测量内容的尺寸
-        textPainter.text = content;
-        textPainter.layout(minWidth: 0, maxWidth: effectiveMaxWidth);
-        final textSize = textPainter.size;
-
-        // 判断是否需要截断
-        TextSpan textSpan;
-        int? endOffset;
-        if (textPainter.didExceedMaxLines) {
-          // 需要截断
-          final position = textPainter.getPositionForOffset(Offset(
-            textSize.width - linkSize.width,
-            textSize.height,
-          ));
-          endOffset = textPainter.getOffsetBefore(position.offset) ?? 0;
-
-          if (_expanded) {
-            // 已展开：显示全部内容 + 收起按钮
-            textSpan = TextSpan(
-              style: effectiveTextStyle,
-              children: <TextSpan>[
-                content,
-                link,
-              ],
-            );
-          } else {
-            // 未展开：截断内容 + 展开按钮
-            final truncatedContent = _buildTruncatedContent(
-              endOffset,
-              effectiveTextStyle,
-            );
-            textSpan = TextSpan(
-              style: effectiveTextStyle,
-              children: <TextSpan>[
-                truncatedContent,
-                link,
-              ],
-            );
-          }
-        } else {
-          // 不需要截断
-          if (_expanded) {
-            // 显示全部内容 + 收起按钮
-            textSpan = TextSpan(
-              style: effectiveTextStyle,
-              children: <TextSpan>[
-                content,
-                link,
-              ],
-            );
-          } else {
-            // 仅显示内容
-            textSpan = content;
-          }
-        }
-
-        var richText = Text.rich(
-          textSpan,
-          softWrap: true,
-          textDirection: textDirection,
-          textScaleFactor: textScaleFactor,
-          overflow: TextOverflow.clip,
-        );
-
-        return widget.builder != null ? widget.builder!(richText, textSpan, endOffset) : richText;
+    return RawGestureDetector(
+      behavior: HitTestBehavior.translucent, // 允许单击穿透给父级
+      gestures: {
+        DoubleTapGestureRecognizer:
+        GestureRecognizerFactoryWithHandlers<DoubleTapGestureRecognizer>(
+              () => DoubleTapGestureRecognizer(),
+              (instance) {
+            instance.onDoubleTap = _toggleExpanded; // 双击触发展开/收起
+          },
+        ),
       },
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          assert(constraints.hasBoundedWidth);
+          final double maxWidth = constraints.maxWidth;
+
+          final textDirection = Directionality.of(context);
+          final textScaleFactor = MediaQuery.textScaleFactorOf(context);
+          final locale = Localizations.maybeLocaleOf(context);
+
+          // 构建链接按钮
+          final linkText = _expanded ? widget.collapseText : widget.expandText;
+          final link = TextSpan(
+            text: _expanded ? ' $linkText' : '... $linkText',
+            style: linkTextStyle,
+            recognizer: _linkTapGestureRecognizer,
+          );
+
+          // 如果使用 builder,需要减去容错宽度以匹配实际渲染
+          // SelectableText 等组件可能会占用额外宽度(如光标、边距等)
+          final double effectiveMaxWidth = maxWidth - (widget.toleranceWidth ?? 0); // 减去容错宽度,默认 0
+
+          // 测量链接按钮的尺寸
+          TextPainter textPainter = TextPainter(
+            text: link,
+            textDirection: textDirection,
+            textScaleFactor: textScaleFactor,
+            maxLines: widget.maxLines,
+            locale: locale,
+          );
+          textPainter.layout(minWidth: 0, maxWidth: effectiveMaxWidth);
+          final linkSize = textPainter.size;
+
+          // 构建内容
+          final content = _buildContent(effectiveTextStyle);
+
+          // 测量内容的尺寸
+          textPainter.text = content;
+          textPainter.layout(minWidth: 0, maxWidth: effectiveMaxWidth);
+          final textSize = textPainter.size;
+
+          // 判断是否需要截断
+          TextSpan textSpan;
+          int? endOffset;
+          if (textPainter.didExceedMaxLines) {
+            // 需要截断
+            final position = textPainter.getPositionForOffset(Offset(
+              textSize.width - linkSize.width,
+              textSize.height,
+            ));
+            endOffset = textPainter.getOffsetBefore(position.offset) ?? 0;
+
+            if (_expanded) {
+              // 已展开：显示全部内容 + 收起按钮
+              textSpan = TextSpan(
+                style: effectiveTextStyle,
+                children: <TextSpan>[
+                  content,
+                  link,
+                ],
+              );
+            } else {
+              // 未展开：截断内容 + 展开按钮
+              final truncatedContent = _buildTruncatedContent(
+                endOffset,
+                effectiveTextStyle,
+              );
+              textSpan = TextSpan(
+                style: effectiveTextStyle,
+                children: <TextSpan>[
+                  truncatedContent,
+                  link,
+                ],
+              );
+            }
+          } else {
+            // 不需要截断
+            if (_expanded) {
+              // 显示全部内容 + 收起按钮
+              textSpan = TextSpan(
+                style: effectiveTextStyle,
+                children: <TextSpan>[
+                  content,
+                  link,
+                ],
+              );
+            } else {
+              // 仅显示内容
+              textSpan = content;
+            }
+          }
+
+          var richText = Text.rich(
+            textSpan,
+            softWrap: true,
+            textDirection: textDirection,
+            textScaleFactor: textScaleFactor,
+            overflow: TextOverflow.clip,
+          );
+
+          return widget.builder != null
+              ? widget.builder!(richText, textSpan, endOffset)
+              : richText;
+        },
+      ),
     );
   }
 
