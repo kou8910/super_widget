@@ -131,8 +131,10 @@ class SuperLoadController {
   void showCustom(String customTag) => _showPage(customTag);
 
   void _showPage(String tag) {
-    this.tag = tag;
-    _state?.refreshPage();
+    if(this.tag != tag){
+      this.tag = tag;
+      _state?.refreshPage();
+    }
   }
 
   void dispose() {
