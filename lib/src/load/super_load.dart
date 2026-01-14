@@ -6,17 +6,34 @@ import 'super_load_status.dart';
 
 /// 缺省页
 class SuperLoad extends StatefulWidget {
+  /// 控制器
   final SuperLoadController controller;
+
+  /// 点击事件
   final FutureOr Function(Map<String, dynamic>? params)? onTap;
+
+  /// content页面，用于展示给客户
   final Widget child;
+
+  /// state缺省页构造器，默认情况下会返回定义的缺省布局，在滑片中根据实际情况进行包装
   final Widget Function(Widget widget)? stateBuilder;
+
+  /// 自定义参数，会传递到 [SuperLoadPage] 中
   final Map<String, dynamic>? params;
+
+  /// 自定义页面。自定义页面中的key会覆盖全局配置的key
+  /// key可使用[SuperLoadStatus]枚举的[name]属性
   final Map<String, SuperLoadPage>? otherPages;
+
+  /// 默认展示的tag
   final String? defaultStateTag;
+
   final bool Function()? isStateShow;
 
   /// 全局配置的默认页面
   static Map<String, SuperLoadPage>? Function() defaultPages = () => null;
+
+
 
   /// 全局默认状态
   static SuperLoadStatus defaultLoadStatus = SuperLoadStatus.content;
@@ -74,20 +91,29 @@ class _LoadPageState extends State<SuperLoad> {
   Widget build(BuildContext context) {
     final tag = widget.controller.tag;
 
-    if (tag == SuperLoadStatus.content.name) {
-      return widget.child;
+    final checker = widget.isStateShow;
+    if (checker != null && checker()) {
+      final page = _cachedPages[tag];
+      // ❗兜底保护
+      if (page == null) {
+        return widget.child;
+      }
+      return widget.stateBuilder!(page);
+    }else{
+      if (tag == SuperLoadStatus.content.name) {
+        return widget.child;
+      }
+
+      final page = _cachedPages[tag];
+
+      // ❗兜底保护
+      if (page == null) {
+        return widget.child;
+      }
+      return widget.stateBuilder == null
+          ? page
+          : widget.stateBuilder!(page);
     }
-
-    final page = _cachedPages[tag];
-
-    // ❗兜底保护
-    if (page == null) {
-      return widget.child;
-    }
-
-    return widget.stateBuilder == null
-        ? page
-        : widget.stateBuilder!(page);
   }
 
   /// 解析 pages（不污染全局配置）
@@ -105,6 +131,7 @@ class _LoadPageState extends State<SuperLoad> {
     return pageMap;
   }
 
+  /// 切换页面的方法
   void refreshPage() {
     if (mounted) {
       setState(() {});
