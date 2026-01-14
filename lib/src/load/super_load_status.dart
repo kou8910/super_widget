@@ -14,6 +14,11 @@ enum SuperLoadStatus {
 
   /// 内容页
   content,
+  ///拉黑
+  block,
+
+  ///没权限
+  private,
 
   /// 其他页
   other,

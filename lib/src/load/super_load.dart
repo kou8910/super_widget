@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
 import 'package:flutter/material.dart';
 
@@ -29,6 +30,8 @@ class SuperLoad extends StatefulWidget {
   /// 默认展示的tag
   final String? defaultStateTag;
 
+  final bool Function()? isStateShow;
+
   /// 全局配置的默认页面
   static Map<String, SuperLoadPage>? Function() defaultPages = () => null;
 
@@ -37,6 +40,7 @@ class SuperLoad extends StatefulWidget {
 
   /// 全局默认状态
   static SuperLoadStatus defaultLoadStatus = SuperLoadStatus.content;
+
 
   const SuperLoad({
     super.key,
@@ -47,6 +51,7 @@ class SuperLoad extends StatefulWidget {
     this.params,
     this.otherPages,
     this.defaultStateTag,
+    this.isStateShow,
   });
 
   @override
@@ -132,8 +137,18 @@ class SuperLoadController {
 
   void _showPage(String tag) {
     if(this.tag != tag){
-      this.tag = tag;
-      _state?.refreshPage();
+      bool isOK = true;
+      if(_state?.widget.isStateShow != null  ){
+        if(_state!.widget.isStateShow.call() ?? false ){
+          if([SuperLoadStatus.error.name,SuperLoadStatus.empty.name,SuperLoadStatus.netError.name,SuperLoadStatus.loading.name,].contains(tag)  ){
+            isOK = false;
+          }
+        }
+      }
+      if(isOK){
+        this.tag = tag;
+        _state?.refreshPage();
+      }
     }
   }
 
