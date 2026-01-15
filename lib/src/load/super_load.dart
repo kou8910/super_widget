@@ -168,6 +168,7 @@ class SuperLoadController {
         SuperLoadStatus.empty.name,
         SuperLoadStatus.netError.name,
         SuperLoadStatus.loading.name,
+        SuperLoadStatus.content.name,
       ].contains(newTag)) {
         allow = false;
       }
