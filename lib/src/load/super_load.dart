@@ -26,7 +26,7 @@ class SuperLoad extends StatefulWidget {
   final Map<String, SuperLoadPage>? otherPages;
 
   /// 默认展示的tag
-  final String? defaultStateTag;
+   String? defaultStateTag;
 
   final bool Function()? isStateShow;
 
@@ -38,7 +38,7 @@ class SuperLoad extends StatefulWidget {
   /// 全局默认状态
   static SuperLoadStatus defaultLoadStatus = SuperLoadStatus.content;
 
-  const SuperLoad({
+   SuperLoad({
     super.key,
     required this.controller,
     required this.child,
@@ -89,10 +89,11 @@ class _LoadPageState extends State<SuperLoad> {
 
   @override
   Widget build(BuildContext context) {
-    final tag = widget.controller.tag;
+
 
     final checker = widget.isStateShow;
     if (checker != null && checker()) {
+      final tag = widget.defaultStateTag ?? widget.controller.tag;
       final page = _cachedPages[tag];
       // ❗兜底保护
       if (page == null) {
@@ -100,6 +101,7 @@ class _LoadPageState extends State<SuperLoad> {
       }
       return widget.stateBuilder!(page);
     }else{
+      final tag = widget.controller.tag;
       if (tag == SuperLoadStatus.content.name) {
         return widget.child;
       }
